@@ -27,15 +27,28 @@ function Client(options) {
 }
 
 Client.prototype.publish = function (roomName, message, callback) {
-  if (typeof message !== 'object')
+  if (typeof message !== 'object') {
     throw new Error('Message must be of type object');
+  }
 
-  request.post({
-    baseUrl: BASE_URL,
-    uri: this.channelId + '/' + roomName + '/publish',
-    json: message,
-    auth: this.auth
-  }, wrapRequestCallback(callback));
+  if (Array.isArray(roomName)) {
+    var rooms = roomName.map(function (room) {
+      return 'r=' + room;
+    }).join('&');
+    request.post({
+      baseUrl: BASE_URL,
+      uri: this.channelId + '/publish/rooms?' + rooms,
+      json: message,
+      auth: this.auth
+    }, wrapRequestCallback(callback));
+  } else {
+    request.post({
+      baseUrl: BASE_URL,
+      uri: this.channelId + '/' + roomName + '/publish',
+      json: message,
+      auth: this.auth
+    }, wrapRequestCallback(callback));
+  }
 };
 
 Client.prototype.channelStats = function (callback) {

@@ -12,6 +12,12 @@ test('publish', function (t) {
   });
 });
 
+test('publish to multiple rooms', function (t) {
+  sd.publish(['notifications', 'lounge'], {to: 'multiple'}, function (error) {
+    t.end(error);
+  });
+});
+
 test('channelStats', function (t) {
   sd.channelStats(function (error, reply) {
     t.end(error);
