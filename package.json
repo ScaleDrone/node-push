@@ -1,6 +1,6 @@
 {
   "name": "scaledrone-node-push",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Official Scaledrone Node.js pushing library",
   "main": "index.js",
   "scripts": {
