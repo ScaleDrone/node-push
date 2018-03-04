@@ -24,8 +24,26 @@ test('channelStats', function(t) {
   });
 });
 
-test('usersList', function(t) {
-  sd.usersList(function(error) {
+test('members', function(t) {
+  sd.members(function(error) {
+    t.end(error);
+  });
+});
+
+test('rooms', function(t) {
+  sd.rooms(function(error) {
+    t.end(error);
+  });
+});
+
+test('roomMembers', function(t) {
+  sd.roomMembers('my-room', function(error) {
+    t.end(error);
+  });
+});
+
+test('allRoomMembers', function(t) {
+  sd.allRoomMembers(function(error) {
     t.end(error);
   });
 });

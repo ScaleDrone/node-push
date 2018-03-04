@@ -51,15 +51,39 @@ class Scaledrone {
   channelStats(callback) {
     request.get({
       baseUrl: BASE_URL,
-      uri: this.channelId + '/stats',
+      uri: `${this.channelId}/stats`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
   }
 
-  usersList(callback) {
+  members(callback) {
     request.get({
       baseUrl: BASE_URL,
-      uri: this.channelId + '/users',
+      uri: `${this.channelId}/members`,
+      auth: this.auth
+    }, wrapRequestCallback(callback, true));
+  }
+
+  rooms(callback) {
+    request.get({
+      baseUrl: BASE_URL,
+      uri: `${this.channelId}/rooms`,
+      auth: this.auth
+    }, wrapRequestCallback(callback, true));
+  }
+
+  roomMembers(roomName, callback) {
+    request.get({
+      baseUrl: BASE_URL,
+      uri: `${this.channelId}/${roomName}/members`,
+      auth: this.auth
+    }, wrapRequestCallback(callback, true));
+  }
+
+  allRoomMembers(callback) {
+    request.get({
+      baseUrl: BASE_URL,
+      uri: `${this.channelId}/room-members`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
   }

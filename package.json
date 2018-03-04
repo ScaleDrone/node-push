@@ -1,12 +1,12 @@
 {
   "name": "scaledrone-node-push",
-  "version": "1.1.0",
-  "description": "Official ScaleDrone Node.js pushing library",
+  "version": "1.2.0",
+  "description": "Official Scaledrone Node.js pushing library",
   "main": "index.js",
   "scripts": {
     "test": "node test/test.js"
   },
-  "author": "ScaleDrone",
+  "author": "Scaledrone",
   "license": "ISC",
   "dependencies": {
     "request": "^2.65.0"
