@@ -1,80 +1,80 @@
-var request = require('request');
+const request = require('request');
 
-var BASE_URL = 'https://api2.scaledrone.com'
+const BASE_URL = 'https://api2.scaledrone.com';
 
-function Client(options) {
-  if (!(this instanceof Client)) {
-    return new Client(options);
+class Scaledrone {
+  constructor({channelId, secretKey} = {}) {
+    if (!channelId) {
+      throw new Error('ChannelId must be set');
+    }
+    if (!secretKey) {
+      throw new Error('SecretKey must be set');
+    }
+    if (typeof channelId !== 'string') {
+      throw new Error('ChannelId must be of type string');
+    }
+    if (typeof secretKey !== 'string') {
+      throw new Error('SecretKey must be of type string');
+    }
+
+    this.auth = {
+      user: channelId,
+      pass: secretKey
+    };
+
+    this.channelId = channelId;
   }
 
-  options = options || {};
+  publish(roomName, message, callback) {
+    if (typeof message !== 'object') {
+      throw new Error('Message must be of type object');
+    }
 
-  if (!options.channelId)
-    throw new Error('ChannelId must be set');
-  if (!options.secretKey)
-    throw new Error('SecretKey must be set');
-  if (typeof options.channelId !== 'string')
-    throw new Error('ChannelId must be of type string');
-  if (typeof options.secretKey !== 'string')
-    throw new Error('SecretKey must be of type string');
-
-  this.auth = {
-    user: options.channelId,
-    pass: options.secretKey
+    if (Array.isArray(roomName)) {
+      const rooms = roomName.map(room => `r=${room}`).join('&');
+      request.post({
+        baseUrl: BASE_URL,
+        uri: `${this.channelId}/publish/rooms?${rooms}`,
+        json: message,
+        auth: this.auth
+      }, wrapRequestCallback(callback));
+    } else {
+      request.post({
+        baseUrl: BASE_URL,
+        uri: `${this.channelId}/${roomName}/publish`,
+        json: message,
+        auth: this.auth
+      }, wrapRequestCallback(callback));
+    }
   }
 
-  this.channelId = options.channelId;
+  channelStats(callback) {
+    request.get({
+      baseUrl: BASE_URL,
+      uri: this.channelId + '/stats',
+      auth: this.auth
+    }, wrapRequestCallback(callback, true));
+  }
+
+  usersList(callback) {
+    request.get({
+      baseUrl: BASE_URL,
+      uri: this.channelId + '/users',
+      auth: this.auth
+    }, wrapRequestCallback(callback, true));
+  }
 }
 
-Client.prototype.publish = function (roomName, message, callback) {
-  if (typeof message !== 'object') {
-    throw new Error('Message must be of type object');
-  }
-
-  if (Array.isArray(roomName)) {
-    var rooms = roomName.map(function (room) {
-      return 'r=' + room;
-    }).join('&');
-    request.post({
-      baseUrl: BASE_URL,
-      uri: this.channelId + '/publish/rooms?' + rooms,
-      json: message,
-      auth: this.auth
-    }, wrapRequestCallback(callback));
-  } else {
-    request.post({
-      baseUrl: BASE_URL,
-      uri: this.channelId + '/' + roomName + '/publish',
-      json: message,
-      auth: this.auth
-    }, wrapRequestCallback(callback));
-  }
-};
-
-Client.prototype.channelStats = function (callback) {
-  request.get({
-    baseUrl: BASE_URL,
-    uri: this.channelId + '/stats',
-    auth: this.auth
-  }, wrapRequestCallback(callback, true));
-};
-
-Client.prototype.usersList = function (callback) {
-  request.get({
-    baseUrl: BASE_URL,
-    uri: this.channelId + '/users',
-    auth: this.auth
-  }, wrapRequestCallback(callback, true));
-};
-
 function wrapRequestCallback(callback, parseResponse) {
-  return function (error, incomingMessage, response) {
+  return function(error, incomingMessage, response) {
     if (error) {
       callback(error);
     } else if (incomingMessage.statusCode >= 400) {
       try {
         response = JSON.parse(response).message;
-      } catch (e) {}
+      } catch (e) {
+        //
+      }
       callback(new Error(response));
     } else {
       if (parseResponse) {
@@ -82,7 +82,7 @@ function wrapRequestCallback(callback, parseResponse) {
       }
       callback(null, response);
     }
-  }
+  };
 }
 
-module.exports = Client;
+module.exports = Scaledrone;
