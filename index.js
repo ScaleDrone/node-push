@@ -1,9 +1,7 @@
 const request = require('request');
 
-const BASE_URL = 'https://api2.scaledrone.com';
-
 class Scaledrone {
-  constructor({channelId, secretKey} = {}) {
+  constructor({channelId, secretKey, baseURL} = {}) {
     if (!channelId) {
       throw new Error('ChannelId must be set');
     }
@@ -22,6 +20,7 @@ class Scaledrone {
       pass: secretKey
     };
 
+    this.baseURL = baseURL || 'https://api2.scaledrone.com';
     this.channelId = channelId;
   }
 
@@ -33,14 +32,14 @@ class Scaledrone {
     if (Array.isArray(roomName)) {
       const rooms = roomName.map(room => `r=${room}`).join('&');
       request.post({
-        baseUrl: BASE_URL,
+        baseUrl: this.baseURL,
         uri: `${this.channelId}/publish/rooms?${rooms}`,
         json: message,
         auth: this.auth
       }, wrapRequestCallback(callback));
     } else {
       request.post({
-        baseUrl: BASE_URL,
+        baseUrl: this.baseURL,
         uri: `${this.channelId}/${roomName}/publish`,
         json: message,
         auth: this.auth
@@ -50,7 +49,7 @@ class Scaledrone {
 
   channelStats(callback) {
     request.get({
-      baseUrl: BASE_URL,
+      baseUrl: this.baseURL,
       uri: `${this.channelId}/stats`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
@@ -58,7 +57,7 @@ class Scaledrone {
 
   members(callback) {
     request.get({
-      baseUrl: BASE_URL,
+      baseUrl: this.baseURL,
       uri: `${this.channelId}/members`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
@@ -66,7 +65,7 @@ class Scaledrone {
 
   rooms(callback) {
     request.get({
-      baseUrl: BASE_URL,
+      baseUrl: this.baseURL,
       uri: `${this.channelId}/rooms`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
@@ -74,7 +73,7 @@ class Scaledrone {
 
   roomMembers(roomName, callback) {
     request.get({
-      baseUrl: BASE_URL,
+      baseUrl: this.baseURL,
       uri: `${this.channelId}/${roomName}/members`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
@@ -82,7 +81,7 @@ class Scaledrone {
 
   allRoomMembers(callback) {
     request.get({
-      baseUrl: BASE_URL,
+      baseUrl: this.baseURL,
       uri: `${this.channelId}/room-members`,
       auth: this.auth
     }, wrapRequestCallback(callback, true));
