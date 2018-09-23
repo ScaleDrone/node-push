@@ -4,6 +4,8 @@ Official Scaledrone Node.js pushing library
 
 Allows for usage of all Scaledrone's [REST API](https://www.scaledrone.com/docs/rest) methods.
 
+For the Node.js WebSocket API Client check out [this link](https://www.scaledrone.com/docs/quick-start/node-websocket).
+
 ## Installation
 ```
 npm install scaledrone-node-push --save
