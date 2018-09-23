@@ -12,6 +12,18 @@ test('publish', function(t) {
   });
 });
 
+test('publish a string', function(t) {
+  sd.publish('notifications', 'hello world', function(error) {
+    t.end(error);
+  });
+});
+
+test('publish a number', function(t) {
+  sd.publish('notifications', 1.23, function(error) {
+    t.end(error);
+  });
+});
+
 test('publish to multiple rooms', function(t) {
   sd.publish(['notifications', 'lounge'], {to: 'multiple'}, function(error) {
     t.end(error);

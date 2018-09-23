@@ -1,4 +1,5 @@
 const request = require('request');
+const isJSON = require('./is_json');
 
 class Scaledrone {
   constructor({channelId, secretKey, baseURL} = {}) {
@@ -25,26 +26,23 @@ class Scaledrone {
   }
 
   publish(roomName, message, callback) {
-    if (typeof message !== 'object') {
-      throw new Error('Message must be of type object');
+    const prep = {
+      baseUrl: this.baseURL,
+      auth: this.auth
+    };
+    const object = isJSON(message);
+    if (object) {
+      prep.json = object;
+    } else {
+      prep.body = message + '';
     }
-
     if (Array.isArray(roomName)) {
       const rooms = roomName.map(room => `r=${room}`).join('&');
-      request.post({
-        baseUrl: this.baseURL,
-        uri: `${this.channelId}/publish/rooms?${rooms}`,
-        json: message,
-        auth: this.auth
-      }, wrapRequestCallback(callback));
+      prep.uri = `${this.channelId}/publish/rooms?${rooms}`;
     } else {
-      request.post({
-        baseUrl: this.baseURL,
-        uri: `${this.channelId}/${roomName}/publish`,
-        json: message,
-        auth: this.auth
-      }, wrapRequestCallback(callback));
+      prep.uri = `${this.channelId}/${roomName}/publish`;
     }
+    request.post(prep, wrapRequestCallback(callback));
   }
 
   channelStats(callback) {
