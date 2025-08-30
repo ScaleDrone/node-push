@@ -12,6 +12,15 @@ test('publish', function(t) {
   });
 });
 
+test('async', async t => {
+  try {
+    await sd.publish('notifications', {foo: 'bar'});
+    t.end();
+  } catch (err) {
+    t.end(err);
+  }
+});
+
 test('publish a string', function(t) {
   sd.publish('notifications', 'hello world', function(error) {
     t.end(error);
@@ -34,6 +43,16 @@ test('channelStats', function(t) {
   sd.channelStats(function(error) {
     t.end(error);
   });
+});
+
+test('async channelStats', async t => {
+  try {
+    const stats = await sd.channelStats();
+    t.ok('users_count' in stats);
+    t.end();
+  } catch (error) {
+    t.end(error);
+  }
 });
 
 test('members', function(t) {
